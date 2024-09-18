@@ -5,17 +5,21 @@
 
 int main2(int argc, char **argv, char **env)
 {
+	// no estamos utilizando en los parametros los argc argv y env
 
 		pid_t pid;
 		pid_t	pid1;
-		int status;
+		int status; // almacena el estado del hijo
 
-		status =0;
+		// ¿por que dos hijos?
+
+		status = 0;
 
 		pid = fork();
 		if (pid == -1)
 		{
-
+			//perror("fork");
+			//return(1);
 		}
 		else if (pid == 0)
 		{
@@ -24,11 +28,22 @@ int main2(int argc, char **argv, char **env)
 		pid1 = fork();
 		if (pid1 == -1)
 		{
-
+			//perror("fork");
+			//return(1);
 		}
 		else if (pid1 == 0)
 		{
-			exit(2);
+
+
+
+
+
+
+
+			exit(2); // 0 es el hijo, y el padre (numeros positivos)?
+			// cual es el pid padre y el pid hijo? --> no se necesita proceso padre porque
+			// el padre es el original? 
+			// se podria hacer en dos procesos: proceso_padre(waitpid) y proceso_hijo
 		}
 
 		waitpid(pid, &status, 0);
@@ -37,15 +52,29 @@ int main2(int argc, char **argv, char **env)
 		printf("EStado de finalizacion del pid1: %d\n", WEXITSTATUS(status));
 
 }
-
-pid_t ft_executepid(int fd_pid[2], char **cmd, char **env)
+pid_t generate_pid(void *(*f)(void *), void * data)
 {
 	pid_t pid;
 
 	pid = fork();
 	if (pid == -1)
 	{
+		// por que el mismo proceso tantas veces? 
+	}
+	else if (pid == 0)
+	{
+		f(data);
+		exit(0);
+	}
+}
+pid_t ft_executepid(int fd_pid[2], char *cmd, char **env)
+{
+	pid_t pid;
 
+	pid = fork();
+	if (pid == -1)
+	{
+		// por que el mismo proceso tantas veces? 
 	}
 	else if (pid == 0)
 	{
@@ -57,6 +86,7 @@ pid_t ft_executepid(int fd_pid[2], char **cmd, char **env)
 			close(fd_pid[0]);
 		if (fd_pid[1] != 1)
 			close(fd_pid[1]);
+		ft_split(cmd, ' ');
 		if (execve(cmd[0], cmd, env) == -1)
 			(printf("%s\n", strerror(errno)), exit(127));
 	}
@@ -80,6 +110,8 @@ int main(int argc, char **argv, char **env)
 		init_fd[0] = 0;
 		init_fd[1] = fds[1];
 		ft_executepid(init_fd,(char *[]){"/usr/bin/ls", "-l", NULL}, env);
+		// entiendo que lo anterior no puedo utilizarlo 
+		// por lo cual tendré que utilizar el split
 		close(init_fd[0]); 
 		init_fd[0] = fds[0];
 		init_fd[1] = 1;

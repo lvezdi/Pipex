@@ -4,19 +4,22 @@ CC = gcc
 
 CFLAGS = -Wall -Wextra -Werror
 
-SRC = main.c \
+RM = rm -f
+
+SRC = main.c pipex.c
 
 OBJS = $(SRC:.c=.o)
 
-RM = rm -f
-
 all : $(NAME)
 
+$(NAME): $(OBJS)
+	@$(CC) $(CFLAGS) $(OBJS) -o $(NAME)
+
 clean : 
-		$(RM) $(OBJS)
+	$(RM) $(OBJS)
 
 fclean : clean
-			$(RM) $(NAME)
+	$(RM) $(NAME)
 
 re : fclean all
 
