@@ -6,19 +6,22 @@ CFLAGS = -Wall -Wextra -Werror
 
 RM = rm -f
 
-SRC = main.c pipex.c
+SRC = pruebas.c
 
 OBJS = $(SRC:.c=.o)
 
 all : $(NAME)
 
 $(NAME): $(OBJS)
+	@$(MAKE) -C Libft
 	@$(CC) $(CFLAGS) $(OBJS) -o $(NAME)
 
-clean : 
+clean :
+	@$(MAKE) clean -C Libft
 	$(RM) $(OBJS)
 
 fclean : clean
+	@$(MAKE) fclean -C Libft
 	$(RM) $(NAME)
 
 re : fclean all

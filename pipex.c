@@ -1,7 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   pipex.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lvez-dia <lvez-dia@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/09/23 17:51:18 by lvez-dia          #+#    #+#             */
+/*   Updated: 2024/09/23 17:51:19 by lvez-dia         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "pipex.h"
 #include <stdio.h>
 #include <errno.h>
 #include <string.h>
+#include <sys/types.h>
 #define STDIN 0
 #define STDOUT 1
 
@@ -26,7 +39,7 @@ char	**generate_command(char *cmd, char **env)
 		temp1 = ft_strjoin(paths[i], "/");// paths[0]="/home/lvez-dia/bin" + "/"" = "ls" -> temp = /home/lvez-dia/bin/
 		temp = ft_strjoin(temp1, comands[0]);// "/home/lvez-dia/bin/" + "ls"" = "ls" -> temp = /home/lvez-dia/bin/ls
 		free(temp1);
-		if (access(temp, X_OK | F_OK))
+		if (access(temp, X_OK == 0))
 		{
 			//libero paths, Libero
 			//free_p2(paths);
@@ -37,8 +50,6 @@ char	**generate_command(char *cmd, char **env)
 	}
 	return (comands);
 }
-
-
 
 pid_t ft_executepid(int fd_pid[2], char *cmd, char **env)
 {
@@ -79,6 +90,7 @@ int main6(int argc, char **argv, char **env)
 		char *outfile;
 		if(argc != 5)
 			return (0);
+		
 		infile = argv[1];
 		outfile = argv[4];
 		status = 0;
