@@ -6,11 +6,11 @@
 /*   By: lvez-dia <lvez-dia@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 17:51:31 by lvez-dia          #+#    #+#             */
-/*   Updated: 2024/09/23 17:51:32 by lvez-dia         ###   ########.fr       */
+/*   Updated: 2024/09/26 17:42:09 by lvez-dia         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+/*#include "pipex.h"
 #include <stdio.h>
 #include <errno.h>
 #include <string.h>
@@ -150,4 +150,4 @@ int main1(int argc, char **argv, char **env)
 	dup2(outfile, STDOUT_FILENO);
 	if (execve("/usr/bin/cat", (char *[]){"cat","-e", NULL}, env) == -1)
 		(printf("%s\n", strerror(errno)), exit(127));
-}
+}*/

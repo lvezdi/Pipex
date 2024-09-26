@@ -6,7 +6,7 @@
 /*   By: lvez-dia <lvez-dia@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 17:51:10 by lvez-dia          #+#    #+#             */
-/*   Updated: 2024/09/23 21:07:38 by lvez-dia         ###   ########.fr       */
+/*   Updated: 2024/09/26 19:45:30 by lvez-dia         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,27 +16,58 @@
 #include <errno.h>
 #include <string.h>
 #include <sys/types.h>
-#define STDIN 0
-#define STDOUT 1
 
-char *get_path(char **env)
+void	ft_free_p2(char **p2)
 {
-    int i = 0;
-    char *path_prefix = "PATH=";
+	int	i;
 
-    while (env[i] != NULL)
-    {
-        if (ft_strncmp(env[i], path_prefix, ft_strlen(path_prefix)) == 0)
-        {
-            return (ft_strdup(env[i] + ft_strlen(path_prefix)));
-        }
-        i++;
+	i = 0;
+	while (p2[i])
+		free(p2[i++]);
+	free(p2);
+}
+
+static int	do_exec(char *line, char **env)
+{
+	char	**command;
+
+	command = ft_split(line, ' ');
+	if (!command)
+		(perror("Memory error: "));
+	if (*command == 0)
+		return (ft_free_p2(command), -1);//libera el split
+	if ((access(command[0], F_OK | X_OK) == 0) \
+	&& ft_strnstr(command[0], "./", 2))
+	{
+		if (execve(command[0], command, env) == -1)
+			return (ft_free_p2(command), -1);
+	}
+	else if (access(command[0], F_OK | X_OK) != 0 && ft_strchr(command[0], '/'))
+		return (ft_free_p2(command), -1);
+	else
+	{
+		ft_free_p2(command);
+		command = find_command(line, env);
+		if (command[0] == NULL || execve(command[0], command, env) == -1)
+			return (ft_free_p2(command), -1);
+	}
+	return (0);
+}
+
+
+char *extract_path(char **env)
+{
+    while (*env)
+	{
+		if (ft_strncmp(*env, "PATH=", ft_strlen("PATH=")) == 0)
+			return ft_strdup(*env + 5);
+        env++;
     }
     return (NULL);
 }
 
 
-char	**generate_command(char *cmd, char **env)
+char	**find_command(char *cmd, char **env)
 {
 	char	*temp1;
 	char	**paths;
@@ -45,7 +76,7 @@ char	**generate_command(char *cmd, char **env)
 	char	*temp;
 
 	i = 0;
-	temp1 = get_path(env);
+	temp1 = extract_path(env);
 	paths = ft_split(temp1, ':'); //home/lvez-dia/bin:/home/lvez-dia/bin... -> paths[0]="/home/lvez-dia/bin" paths[1]="/home/lvez-dia/bin"..... paths[n] =NULL 
 	free(temp1);
 	comands = ft_split(cmd, ' ');// ls -la -> commands[0] = "ls" commands[1]"-la" commands[2]= NULL
@@ -71,34 +102,36 @@ char	**generate_command(char *cmd, char **env)
 	return (comands);
 }
 
-void	first_son_process(char **argv, int *fd)
+void	first_son_process(char **argv, int *fd, char **env)
 {
-	int infile;
+	int		infile;
 
 	infile = open(argv[1], O_RDONLY);
 	if (infile == -1)
 	{
+		close(fd[0]);
+		close(fd[1]);
 		perror("open infile");
 		exit(EXIT_FAILURE);
 	}
 	dup2(infile, STDIN_FILENO);
 	close(infile);
 	dup2(fd[1], STDOUT_FILENO);
-    close(fd[0]);    // WTF?
-    close(fd[1]);        
-    generate_command(argv[2], (char **)NULL);
+    (close(fd[0]), close(fd[1]));
+	do_exec(argv[2], env);
     perror("generate command");
-    exit(EXIT_FAILURE);	
+    exit(127);	
 }
 
-void	second_son_process(char **argv, int *fd)
+void	second_son_process(char **argv, int *fd, char **env)
 {
-	int outfile;
+	int		outfile;
 
 	outfile = open(argv[4], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (outfile == -1)
 	{
-		//  close(fd[0]);     ????????????
+		close(fd[0]);
+		close(fd[1]);
 		perror("open outfile");
 		exit(EXIT_FAILURE);
 	}
@@ -106,13 +139,13 @@ void	second_son_process(char **argv, int *fd)
 	close(outfile);
 	dup2(fd[0], STDIN_FILENO);
     close(fd[0]);     
-    close(fd[1]);    // WTF?
-    generate_command(argv[3], (char **)NULL);
+    close(fd[1]);
+	do_exec(argv[3], env);
     perror("generate command");
-    exit(EXIT_FAILURE);
+    exit(127);
 }
 
-int	Real_main(int argc, char **argv)
+int	main(int argc, char **argv, char **env)
 {
 	pid_t	pid1;
 	pid_t	pid2;
@@ -127,12 +160,12 @@ int	Real_main(int argc, char **argv)
 	if (pid1 == -1)
 		return(1);
 	if (pid1 == 0)
-		first_son_process(argv, fd);
+		first_son_process(argv, fd, env);
 	pid2 = fork();
 	if (pid2 == -1)
 		return(1);
 	if (pid2 == 0)
-		second_son_process(argv, fd);
+		second_son_process(argv, fd, env);
 	close(fd[0]);
 	close(fd[1]);
 	waitpid(pid1, &status, 0);

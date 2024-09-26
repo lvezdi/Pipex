@@ -6,7 +6,7 @@
 /*   By: lvez-dia <lvez-dia@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 17:51:18 by lvez-dia          #+#    #+#             */
-/*   Updated: 2024/09/23 17:51:19 by lvez-dia         ###   ########.fr       */
+/*   Updated: 2024/09/26 17:41:55 by lvez-dia         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 #define STDIN 0
 #define STDOUT 1
 
-char	**generate_command(char *cmd, char **env)
+/*char	**generate_command(char *cmd, char **env)
 {
 	char	*temp1;
 	char	**paths;
@@ -111,4 +111,4 @@ int main6(int argc, char **argv, char **env)
 		printf("EStado de finalizacion del pid: %d\n", WEXITSTATUS(status));
 		waitpid(pid2, &status, 0);
 		printf("EStado de finalizacion del pid1: %d\n", WEXITSTATUS(status));
-}
+}*/

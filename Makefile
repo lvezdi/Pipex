@@ -8,13 +8,15 @@ RM = rm -f
 
 SRC = pruebas.c
 
+LIB = Libft/libft.a
+
 OBJS = $(SRC:.c=.o)
 
 all : $(NAME)
 
 $(NAME): $(OBJS)
 	@$(MAKE) -C Libft
-	@$(CC) $(CFLAGS) $(OBJS) -o $(NAME)
+	@$(CC) $(CFLAGS) $(OBJS) $(LIB) -o $(NAME)
 
 clean :
 	@$(MAKE) clean -C Libft
