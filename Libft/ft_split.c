@@ -6,18 +6,18 @@
 /*   By: lvez-dia <lvez-dia@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/19 19:00:20 by lvez-dia          #+#    #+#             */
-/*   Updated: 2024/05/03 13:35:05 by lvez-dia         ###   ########.fr       */
+/*   Updated: 2024/10/02 16:34:14 by lvez-dia         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-static void	*ft_empty_array(char **array, size_t words)
+void	*free_split(char **array)
 {
 	size_t	i;
 
 	i = 0;
-	while (i < words)
+	while (array[i])
 	{
 		free(array[i]);
 		i++;
@@ -67,7 +67,7 @@ static char	**ft_split_continuo(char *str, char **array, char c, int end)
 	size_t	start;
 
 	i = 0;
-	array = malloc((ft_count_words(str, c) + 1) * sizeof(char *));
+	array = ft_calloc((ft_count_words(str, c) + 1), sizeof(char *));
 	if (array == NULL)
 		return (NULL);
 	while (str[end] != '\0')
@@ -81,7 +81,7 @@ static char	**ft_split_continuo(char *str, char **array, char c, int end)
 				end++;
 			array[i] = malloc((end - start + 1) * sizeof(char));
 			if (array[i] == NULL)
-				return (ft_empty_array(array, i));
+				return (free_split(array));
 			ft_fill_array(array[i], str, start, end);
 			i++;
 		}

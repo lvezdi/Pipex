@@ -6,7 +6,7 @@
 /*   By: lvez-dia <lvez-dia@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/29 13:39:16 by lvez-dia          #+#    #+#             */
-/*   Updated: 2024/07/15 16:11:50 by lvez-dia         ###   ########.fr       */
+/*   Updated: 2024/10/02 16:34:31 by lvez-dia         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 # include <stdlib.h>
 # include <ctype.h>
 # include <string.h>
-#include <stdint.h>
+# include <stdint.h>
 # include <unistd.h>
 # include <fcntl.h>
 # include <limits.h>
@@ -26,7 +26,6 @@
 # ifndef BUFFER_SIZE
 #  define BUFFER_SIZE 42
 # endif
-
 
 typedef struct s_list
 {
@@ -74,6 +73,7 @@ char				*ft_itoa(int n);
 char				*ft_strmapi(char const *s, char (*f)(unsigned int, char));
 
 char				**ft_split(char const *s, char c);
+void				*free_split(char **array);
 
 t_list				*ft_lstnew(void *content);
 t_list				*ft_lstlast(t_list *lst);
@@ -88,21 +88,6 @@ void				ft_lstiter(t_list *lst, void (*f)(void *));
 
 int					ft_lstsize(t_list *lst);
 
-// int		ft_printf(const char *format, ...);
-// int		print_char(char c);
-// int		print_str(char *s);
-// int		print_int(int number);
-// int		print_hexadecimal_tolower(size_t number);
-// int		print_hexadecimal_toupper(size_t number);
-// int		print_unsigned_int(unsigned int number);
-// int		print_pointer(size_t ptr);
-
-// # endif
-
-// static char	*take_after_new_line(char *temp)
-// static char	*take_until_new_line(char *str)
-// static char	*read_until_new_line(int fd, char **str)
- char	*get_next_line(int fd);
-// char	*ft_strjoin_gnl(char *s1, char *s2)
+char				*get_next_line(int fd);
 
 #endif

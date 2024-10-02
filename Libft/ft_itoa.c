@@ -6,7 +6,7 @@
 /*   By: lvez-dia <lvez-dia@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/11 18:19:51 by lvez-dia          #+#    #+#             */
-/*   Updated: 2024/05/03 13:00:19 by lvez-dia         ###   ########.fr       */
+/*   Updated: 2024/10/01 20:28:47 by lvez-dia         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ char	*ft_itoa(int n)
 	else
 		num = n;
 	return (ft_fill_array(str, num, len));
-} 
+}
 /*int	main(void)
 {
 	int	num = -638;

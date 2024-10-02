@@ -5,20 +5,30 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: lvez-dia <lvez-dia@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/23 17:51:18 by lvez-dia          #+#    #+#             */
-/*   Updated: 2024/09/26 17:41:55 by lvez-dia         ###   ########.fr       */
+/*   Created: 2024/09/23 17:51:10 by lvez-dia          #+#    #+#             */
+/*   Updated: 2024/10/02 17:04:43 by lvez-dia         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
+#include "./Libft/libft.h"
 #include <stdio.h>
 #include <errno.h>
 #include <string.h>
 #include <sys/types.h>
-#define STDIN 0
-#define STDOUT 1
 
-/*char	**generate_command(char *cmd, char **env)
+char	*extract_path(char **env)
+{
+	while (*env)
+	{
+		if (ft_strncmp(*env, "PATH=", ft_strlen("PATH=")) == 0)
+			return (ft_strdup(*env + 50));
+		env++;
+	}
+	return (NULL);
+}
+
+char	**find_command(char *cmd, char **env)
 {
 	char	*temp1;
 	char	**paths;
@@ -27,88 +37,113 @@
 	char	*temp;
 
 	i = 0;
-	temp1 = get_path(env);
-	paths = ft_split(temp1, ':'); //home/lvez-dia/bin:/home/lvez-dia/bin... -> paths[0]="/home/lvez-dia/bin" paths[1]="/home/lvez-dia/bin"..... paths[n] =NULL 
+	temp1 = extract_path(env);
+	paths = ft_split(temp1, ':');
 	free(temp1);
-	comands = ft_split(cmd, ' ');// ls -la -> commands[0] = "ls" commands[1]"-la" commands[2]= NULL
-
-// ls -> /home/lvez-dia/bin ls
-// ls -> /home/lvez-dia/bin/ls
-	while (paths[i++] != NULL)
+	comands = ft_split(cmd, ' ');
+	if (!comands[0])
+		return (free_split(paths), free_split(comands), NULL);
+	while (paths && paths[i] != NULL)
 	{
-		temp1 = ft_strjoin(paths[i], "/");// paths[0]="/home/lvez-dia/bin" + "/"" = "ls" -> temp = /home/lvez-dia/bin/
-		temp = ft_strjoin(temp1, comands[0]);// "/home/lvez-dia/bin/" + "ls"" = "ls" -> temp = /home/lvez-dia/bin/ls
+		temp1 = ft_strjoin(paths[i], "/");
+		temp = ft_strjoin(temp1, comands[0]);
 		free(temp1);
-		if (access(temp, X_OK == 0))
+		if (access(temp, X_OK) == 0)
 		{
-			//libero paths, Libero
-			//free_p2(paths);
 			free(comands[0]);
 			comands[0] = temp;
-			return (comands);
+			return (free_split(paths), comands);
 		}
+		free(temp);
+		i++;
 	}
+	if (paths)
+		free_split(paths);
 	return (comands);
 }
 
-pid_t ft_executepid(int fd_pid[2], char *cmd, char **env)
+void	first_son_process(char **argv, int *fd, char **env)
 {
-	pid_t pid;
-	char **command;
+	int		infile;
+	char	**comands;
 
-	pid = fork();
-	if (pid == -1)
+	infile = open(argv[1], O_RDONLY);
+	if (infile == -1)
 	{
-
+		close(fd[0]);
+		close(fd[1]);
+		perror("open infile");
+		exit(EXIT_FAILURE);
 	}
-	else if (pid == 0)
-	{
-		printf("numero de fds: %d", fd_pid[1]);
-		printf("numero de fds: %d", fd_pid[0]);
-		dup2(fd_pid[0], STDIN_FILENO);
-		dup2(fd_pid[1], STDOUT_FILENO);
-		if (fd_pid[0] != 0)
-			close(fd_pid[0]);
-		if (fd_pid[1] != 1)
-			close(fd_pid[1]);
-		command = generate_command(cmd);
-		if (execve(command[0], command, env) == -1)
-			(printf("%s\n", strerror(errno)), exit(127));
-	}
+	dup2(infile, STDIN_FILENO);
+	close(infile);
+	dup2(fd[1], STDOUT_FILENO);
+	close(fd[0]);
+	close(fd[1]);
+	if (ft_strchr(argv[2], '/'))
+		comands = ft_split(argv[2], ' ');
+	else
+		comands = find_command(argv[2], env);
+	if (comands && comands[0])
+		execve(comands[0],comands, env);
+	if (comands)
+		free_split(comands);
+	exit(127);
 }
 
-int main6(int argc, char **argv, char **env)
+void	second_son_process(char **argv, int *fd, char **env)
 {
+	int		outfile;
+	char	**comands;
 
-		pid_t pid;
-		pid_t	pid2;
-		int status;
-		int fds[2];
-		int fd_pid[2];
+	outfile = open(argv[4], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	if (outfile == -1)
+	{
+		close(fd[0]);
+		close(fd[1]);
+		perror("open outfile");
+		exit(EXIT_FAILURE);
+	}
+	dup2(outfile, STDOUT_FILENO);
+	close(outfile);
+	dup2(fd[0], STDIN_FILENO);
+	close(fd[0]);
+	close(fd[1]);
+	if (ft_strchr(argv[3], '/'))
+		comands = ft_split(argv[3], ' ');
+	else
+		comands = find_command(argv[3], env);
+	if (comands && comands[0])
+		execve(comands[0],comands, env);
+	if (comands)
+		free_split(comands);
+	exit(127);
+}
 
-		char *infile;
-		char *outfile;
-		if(argc != 5)
-			return (0);
-		
-		infile = argv[1];
-		outfile = argv[4];
-		status = 0;
-		pipe(fds);
-		fd_pid[STDIN] = open(infile, O_RDONLY);
-		fd_pid[STDOUT] = fds[STDOUT];
-		pid = ft_executepid(fd_pid, argv[2], env);
-		close(fd_pid[STDIN]);
-		close(fd_pid[STDOUT]);
-		fd_pid[STDIN] = fds[STDIN];
-		fd_pid[STDOUT] = open(outfile, O_WRONLY | O_CREAT, 0644);
-		pid2 = ft_executepid(fd_pid, argv[3], env);
-		if (fd_pid[STDIN] != STDIN_FILENO)
-			close(fd_pid[STDIN]);
-		if (fd_pid[STDOUT] != STDOUT_FILENO)
-			close(fd_pid[STDOUT]);
-		waitpid(pid, &status, 0);
-		printf("EStado de finalizacion del pid: %d\n", WEXITSTATUS(status));
-		waitpid(pid2, &status, 0);
-		printf("EStado de finalizacion del pid1: %d\n", WEXITSTATUS(status));
-}*/
+int	main(int argc, char **argv, char **env)
+{
+	pid_t	pid1;
+	pid_t	pid2;
+	int		fd[2];
+	int		status;
+
+	if(argc != 5)
+		return (0);
+	if (pipe(fd) == -1)
+		return (0);
+	pid1 = fork();
+	if (pid1 == -1)
+		return(1);
+	if (pid1 == 0)
+		first_son_process(argv, fd, env);
+	pid2 = fork();
+	if (pid2 == -1)
+		return(1);
+	if (pid2 == 0)
+		second_son_process(argv, fd, env);
+	close(fd[0]);
+	close(fd[1]);
+	waitpid(pid1, &status, 0);
+	waitpid(pid2, &status, 0);
+	return (WEXITSTATUS(status));
+}

@@ -2,11 +2,11 @@ NAME = pipex
 
 CC = gcc
 
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror -g3
 
 RM = rm -f
 
-SRC = pruebas.c
+SRC = pipex.c
 
 LIB = Libft/libft.a
 
