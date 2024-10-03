@@ -6,7 +6,7 @@
 /*   By: lvez-dia <lvez-dia@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 17:51:10 by lvez-dia          #+#    #+#             */
-/*   Updated: 2024/10/02 19:46:29 by lvez-dia         ###   ########.fr       */
+/*   Updated: 2024/10/03 16:30:19 by lvez-dia         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ void	first_son_process(char **argv, int *fd, char **env)
 	else
 		comands = find_command(argv[2], env);
 	if (comands && comands[0])
-		execve(comands[0],comands, env);
+		execve(comands[0], comands, env);
 	if (comands)
 		free_split(comands);
 	exit(127);
@@ -57,14 +57,13 @@ void	second_son_process(char **argv, int *fd, char **env)
 	dup2(outfile, STDOUT_FILENO);
 	close(outfile);
 	dup2(fd[0], STDIN_FILENO);
-	close(fd[0]);
-	close(fd[1]);
+	(close(fd[0]), close(fd[1]));
 	if (ft_strchr(argv[3], '/'))
 		comands = ft_split(argv[3], ' ');
 	else
 		comands = find_command(argv[3], env);
 	if (comands && comands[0])
-		execve(comands[0],comands, env);
+		execve(comands[0], comands, env);
 	if (comands)
 		free_split(comands);
 	exit(127);
@@ -77,18 +76,18 @@ int	main(int argc, char **argv, char **env)
 	int		fd[2];
 	int		status;
 
-	if(argc != 5)
+	if (argc != 5)
 		return (0);
 	if (pipe(fd) == -1)
 		return (0);
 	pid1 = fork();
 	if (pid1 == -1)
-		return(1);
+		return (1);
 	if (pid1 == 0)
 		first_son_process(argv, fd, env);
 	pid2 = fork();
 	if (pid2 == -1)
-		return(1);
+		return (1);
 	if (pid2 == 0)
 		second_son_process(argv, fd, env);
 	close(fd[0]);

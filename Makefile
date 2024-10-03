@@ -2,12 +2,12 @@ NAME = pipex
 
 CC = gcc
 
-CFLAGS = -Wall -Wextra -Werror -g3 -fsanitize=address
+CFLAGS = -Wall -Wextra -Werror
 
 RM = rm -f
 
 SRC = pipex.c \
-		pipex_c.c
+		path.c
 
 LIB = Libft/libft.a
 

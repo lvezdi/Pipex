@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex_c.c                                          :+:      :+:    :+:   */
+/*   path.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lvez-dia <lvez-dia@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/02 19:44:41 by lvez-dia          #+#    #+#             */
-/*   Updated: 2024/10/02 19:45:17 by lvez-dia         ###   ########.fr       */
+/*   Updated: 2024/10/03 16:30:29 by lvez-dia         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ char	**get_commands(char *cmd)
 		return (free_split(comands), NULL);
 	return (comands);
 }
+
 char	**search_command_in_paths(char **paths, char **comands)
 {
 	int		i;
