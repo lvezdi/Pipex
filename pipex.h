@@ -6,7 +6,7 @@
 /*   By: lvez-dia <lvez-dia@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 16:45:17 by lvez-dia          #+#    #+#             */
-/*   Updated: 2024/10/02 18:59:02 by lvez-dia         ###   ########.fr       */
+/*   Updated: 2024/10/07 13:15:42 by lvez-dia         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,6 @@
 # include <unistd.h>
 # include <fcntl.h>
 # include <sys/wait.h>
-# define READ 0
-# define WRITE 1
 
 void	first_son_process(char **argv, int *fd, char **env);
 void	second_son_process(char **argv, int *fd, char **env);

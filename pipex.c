@@ -6,7 +6,7 @@
 /*   By: lvez-dia <lvez-dia@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 17:51:10 by lvez-dia          #+#    #+#             */
-/*   Updated: 2024/10/03 16:30:19 by lvez-dia         ###   ########.fr       */
+/*   Updated: 2024/10/07 13:22:29 by lvez-dia         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,8 @@ void	second_son_process(char **argv, int *fd, char **env)
 	dup2(outfile, STDOUT_FILENO);
 	close(outfile);
 	dup2(fd[0], STDIN_FILENO);
-	(close(fd[0]), close(fd[1]));
+	close(fd[0]);
+	close(fd[1]);
 	if (ft_strchr(argv[3], '/'))
 		comands = ft_split(argv[3], ' ');
 	else
