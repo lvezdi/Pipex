@@ -1,1 +1,7 @@
-<img src="https://img.shields.io/badge/score-100%20%2F%20100-2ea44f?style=for-the-badge" class="right-align" alt="Score Badge">
+<div align="center">
+	<br />
+	<img src="https://img.shields.io/badge/norminette-passing-success"/>
+	<img src="https://img.shields.io/badge/leaks-none-success" />
+  <img src="https://img.shields.io/badge/-100%2F100-success?logo=42&logoColor=fff" />
+	</a>
+	<br />
